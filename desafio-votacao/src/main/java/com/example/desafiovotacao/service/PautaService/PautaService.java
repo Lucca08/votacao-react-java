@@ -3,6 +3,7 @@ package com.example.desafiovotacao.service.PautaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.desafiovotacao.Exception.PautaNaoEncontradaException;
 import com.example.desafiovotacao.dto.PautaDTO;
 import com.example.desafiovotacao.model.Pauta;
 import com.example.desafiovotacao.repository.PautaRepository;
@@ -32,4 +33,18 @@ public class PautaService {
             .orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada"));
         
     }
+
+    @Transactional
+    public Pauta buscarPautaPorNome(String nome) {
+        return pautaRepository.findByNome(nome)
+            .orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada"));
+    }
+
+    @Transactional
+    public void deletarPauta(Long pautaId) {
+        Pauta pauta = buscarPautaPorId(pautaId);
+        pautaRepository.delete(pauta);
+    }
+
+
 }
