@@ -20,4 +20,10 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse("Ocorreu um erro interno no servidor");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
+
+    @ExceptionHandler(PautaNaoCriadaException.class)
+    public ResponseEntity<ErrorResponse> handlePautaNaoCriadaException(PautaNaoCriadaException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Pauta não criada");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
 }
