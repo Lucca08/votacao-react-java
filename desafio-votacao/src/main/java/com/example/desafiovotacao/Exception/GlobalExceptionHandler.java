@@ -26,4 +26,22 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse("Pauta não criada");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
+
+    @ExceptionHandler(FalhaAoAtualizarPautaException.class)
+    public ResponseEntity<ErrorResponse> handleFalhaAoAtualizarPautaException(FalhaAoAtualizarPautaException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Falha ao atualizar pauta");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(UsuarioExistenteException.class)
+    public ResponseEntity<ErrorResponse> handleUsuarioExistenteException(UsuarioExistenteException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Usuário já cadastrado");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(UsuarioNaoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> handleUsuarioNaoEncontradoException(UsuarioNaoEncontradoException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Usuário não encontrado");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
 }

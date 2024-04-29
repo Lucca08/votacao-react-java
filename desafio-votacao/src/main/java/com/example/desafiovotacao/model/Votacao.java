@@ -24,6 +24,7 @@ public class Votacao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_votacao")
+    
     private Long votacaoId;
 
     @Column(name = "Voto")

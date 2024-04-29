@@ -8,8 +8,9 @@ import com.example.desafiovotacao.model.Pauta;
 
 @Repository
 public interface PautaRepository extends JpaRepository<Pauta, Long>{
-    Optional<Pauta> findById(Long id);
     Optional<Pauta> findByNome(String nome);
+    Optional<Pauta> findById(Long id);
+
     
     
 }

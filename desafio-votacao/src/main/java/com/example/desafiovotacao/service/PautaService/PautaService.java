@@ -3,16 +3,17 @@ package com.example.desafiovotacao.service.PautaService;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.desafiovotacao.Exception.FalhaAoAtualizarPautaException;
 import com.example.desafiovotacao.Exception.PautaNaoCriadaException;
 import com.example.desafiovotacao.Exception.PautaNaoEncontradaException;
 import com.example.desafiovotacao.dto.PautaDTO;
 import com.example.desafiovotacao.model.Pauta;
 import com.example.desafiovotacao.repository.PautaRepository;
+
 
 @Service
 public class PautaService {
@@ -60,34 +61,47 @@ public class PautaService {
                 return new PautaNaoEncontradaException("Pauta não encontrada");
             });
     }
-
+    
     @Transactional
     public void deletarPauta(Long pautaId) {
         LOGGER.info("Deletando pauta com ID: " + pautaId);
-        Pauta pauta = buscarPautaPorId(pautaId);
-        
-        if (pauta == null) {
-            LOGGER.warning("Pauta não encontrada para o ID: " + pautaId);
-            throw new PautaNaoEncontradaException("Pauta não encontrada");
-        }
+        Pauta pauta = pautaRepository.findById(pautaId)
+                .orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada"));
 
         pautaRepository.delete(pauta);
         LOGGER.info("Pauta deletada com sucesso");
-
     }
 
     @Transactional
     public Pauta atualizarPauta(Long pautaId, PautaDTO pautaDTO) {
         LOGGER.info("Atualizando pauta com ID: " + pautaId);
-        Pauta pauta = buscarPautaPorId(pautaId);
+    
+        Pauta pauta = pautaRepository.findById(pautaId)
+            .orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada"));
+    
         pauta.setNome(pautaDTO.getNome());
+
+        Pauta pautaAtualizada = pautaRepository.save(pauta);
+        if (pautaAtualizada == null) {
+            LOGGER.warning("Falha ao atualizar pauta com ID: " + pautaId);
+                throw new FalhaAoAtualizarPautaException("Falha ao atualizar pauta");
+        }
+
         LOGGER.info("Pauta atualizada com sucesso");
-        return pautaRepository.save(pauta);
+         return pautaAtualizada;
     }
+
 
     @Transactional
     public List<Pauta> buscarTodasPautas() {
         LOGGER.info("Buscando todas as pautas");
-        return pautaRepository.findAll();
+        List<Pauta> pautas = pautaRepository.findAll();
+        if (pautas.isEmpty()) {
+            LOGGER.warning("Nenhuma pauta encontrada");
+            throw new PautaNaoEncontradaException("Nenhuma pauta encontrada");
+        }
+        return pautas;
     }
+
+
 }
