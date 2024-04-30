@@ -258,7 +258,50 @@ public class UsuarioServiceTest {
 
     }
 
+    @Test
+    @DisplayName("Teste de atualização de usuário com e-mail existente")
+    public void testAtualizarUsuarioComEmailExistente(){
+        Usuario usuario = new Usuario();
+        usuario.setUsuarioId(1L);
+        usuario.setNome("Usuário de teste");
+        usuario.setCpf("12345678900");
+        usuario.setEmail("lucca@gmail.com");
 
+        Usuario usuarioAtualizado = new Usuario();
+        usuarioAtualizado.setUsuarioId(1L);
+        usuarioAtualizado.setNome("Usuário de teste atualizado");
+        usuarioAtualizado.setCpf("12345678900");
+        usuarioAtualizado.setEmail("lucca@gmail.com");
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.existsByCpf(usuarioAtualizado.getCpf())).thenReturn(false);
+        when(usuarioRepository.existsByEmail(usuarioAtualizado.getEmail())).thenReturn(true);
+
+        Throwable exception = assertThrows(UsuarioExistenteException.class, () -> {
+            usuarioService.atualizarUsuario(usuarioAtualizado);
+        });
+
+        assertEquals("Já existe um usuário cadastrado com o e-mail: " + usuarioAtualizado.getEmail(), exception.getMessage());
+
+    }
+
+    @Test
+    @DisplayName("Teste de atualização de usuário não encontrado")
+    public void testAtualizarUsuarioNaoEncontrado(){
+        Usuario usuarioAtualizado = new Usuario();
+        usuarioAtualizado.setUsuarioId(1L);
+        usuarioAtualizado.setNome("Usuário de teste atualizado");
+        usuarioAtualizado.setCpf("12345678900");
+        usuarioAtualizado.setEmail("lucca@gmail.com");
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Throwable exception = assertThrows(UsuarioNaoEncontradoException.class, () -> {
+            usuarioService.atualizarUsuario(usuarioAtualizado);
+        });
+
+        assertEquals("Usuário não encontrado com o ID: 1", exception.getMessage());
+    }
 
 }
  

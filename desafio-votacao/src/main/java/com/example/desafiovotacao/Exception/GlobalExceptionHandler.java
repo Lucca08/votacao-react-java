@@ -44,4 +44,10 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse("Usuário não encontrado");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
+
+    @ExceptionHandler(UsuarioJaVotouNaPautaException.class)
+    public ResponseEntity<ErrorResponse> handleUsuarioJaVotouNaPautaException(UsuarioJaVotouNaPautaException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Usuário já votou nesta pauta");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }
