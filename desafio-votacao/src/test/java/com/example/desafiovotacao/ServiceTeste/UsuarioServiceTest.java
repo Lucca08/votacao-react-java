@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -303,5 +306,66 @@ public class UsuarioServiceTest {
         assertEquals("Usuário não encontrado com o ID: 1", exception.getMessage());
     }
 
+    @Test
+    @DisplayName("Teste de deletar usuário")
+    public void testDeletarUsuario(){
+        Usuario usuario = new Usuario();
+        usuario.setUsuarioId(1L);
+        usuario.setNome("Usuário de teste");
+        usuario.setCpf("12345678900");
+        usuario.setEmail("luccabibianogarcia02novo@gmail.com");
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setNome("Usuário de teste");
+        usuarioDTO.setCpf("12345678900");
+        usuarioDTO.setEmail("luccabibianogarcia02novo@gmail.com");
+
+        when(usuarioRepository.findByEmail(usuarioDTO.getEmail())).thenReturn(Optional.of(usuario));
+
+        Usuario resultado = usuarioService.deletarUsuarioLogado(usuarioDTO);
+
+        assertEquals(usuario.getNome(), resultado.getNome());
+        assertEquals(usuario.getCpf(), resultado.getCpf());
+        assertEquals(usuario.getEmail(), resultado.getEmail());
+        assertEquals(usuario.isAdmin(), resultado.isAdmin());
+
+    }
+
+    @Test
+    @DisplayName("Teste de deletar usuário com sucesso")
+    public void testDeletarUsuarioComSucesso() {
+        Usuario usuario = new Usuario();
+        usuario.setUsuarioId(1L);
+        usuario.setNome("Usuário de teste");
+        usuario.setCpf("12345678900");
+        usuario.setEmail("luccabibianogarcia02novo@gmail.com");
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setNome("Usuário de teste");
+        usuarioDTO.setCpf("12345678900");
+        usuarioDTO.setEmail("luccabibianogarcia02novo@gmail.com");
+
+        when(usuarioRepository.findByEmail(usuarioDTO.getEmail())).thenReturn(Optional.of(usuario));
+
+        Usuario resultado = usuarioService.deletarUsuarioLogado(usuarioDTO);
+
+        assertEquals(usuario, resultado);
+        verify(usuarioRepository, times(1)).delete(usuario);
+    }
+
+    @Test
+    @DisplayName("Teste de deletar usuário quando o usuário não é encontrado")
+    public void testDeletarUsuarioUsuarioNaoEncontrado() {
+        // Arrange
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setEmail("usuario@test.com");
+
+        when(usuarioRepository.findByEmail(usuarioDTO.getEmail())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(UsuarioNaoEncontradoException.class, () -> {
+            usuarioService.deletarUsuarioLogado(usuarioDTO);
+        });
+        verify(usuarioRepository, never()).delete(any());
+    }
 }
- 

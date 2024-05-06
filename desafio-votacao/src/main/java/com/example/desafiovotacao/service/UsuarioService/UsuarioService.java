@@ -59,8 +59,20 @@ public class UsuarioService {
     return usuario;
 }
 
+    @Transactional(readOnly = true)
+    public Usuario deletarUsuarioLogado(UsuarioDTO usuarioDTO) {
+        Usuario usuario = usuarioRepository.findByEmail(usuarioDTO.getEmail())
+                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o e-mail: " + usuarioDTO.getEmail()));
 
+        if (!usuario.getCpf().equals(usuarioDTO.getCpf())) {
+            throw new UnauthorizedAccessException("Credenciais inválidas");
+        }
 
+        usuarioRepository.delete(usuario);
+        return usuario;
+    }
+
+    
     @Transactional(readOnly = true)
     public Usuario buscarUsuarioPorId(long usuarioId) {
         return usuarioRepository.findById(usuarioId)

@@ -45,8 +45,7 @@ public class PautaService {
         if (novaPauta == null) {
             LOGGER.warning("Pauta não criada");
             throw new PautaNaoCriadaException("Pauta não criada");
-        }
-        
+        }  
         LOGGER.info("Pauta criada com sucesso: " + novaPauta.getPautaId());
         return novaPauta;
     }

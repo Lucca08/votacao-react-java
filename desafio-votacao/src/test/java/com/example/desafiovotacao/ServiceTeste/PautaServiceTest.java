@@ -183,6 +183,7 @@ public class PautaServiceTest {
         assertEquals("Usuário não tem permissão para atualizar pauta", exception.getMessage());
     }
 
-    // Outros testes de atualização de pauta...
+    
+
 
 }
