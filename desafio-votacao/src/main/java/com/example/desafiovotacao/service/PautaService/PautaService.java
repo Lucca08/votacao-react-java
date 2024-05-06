@@ -10,8 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.desafiovotacao.Exception.FalhaAoAtualizarPautaException;
 import com.example.desafiovotacao.Exception.PautaNaoCriadaException;
 import com.example.desafiovotacao.Exception.PautaNaoEncontradaException;
+import com.example.desafiovotacao.Exception.UnauthorizedAccessException;
 import com.example.desafiovotacao.dto.PautaDTO;
+import com.example.desafiovotacao.dto.UsuarioDTO;
 import com.example.desafiovotacao.model.Pauta;
+import com.example.desafiovotacao.model.Usuario;
 import com.example.desafiovotacao.repository.PautaRepository;
 
 
@@ -28,7 +31,12 @@ public class PautaService {
     }
   
     @Transactional
-    public Pauta criarPauta(PautaDTO pautaDTO) {
+    public Pauta criarPauta(PautaDTO pautaDTO, UsuarioDTO usuarioLogado) {
+        if (!usuarioLogado.isAdmin()) {
+            LOGGER.warning("Usuário não tem permissão para criar pauta");
+            throw new UnauthorizedAccessException("Usuário não tem permissão para criar pauta");
+        }
+
         LOGGER.info("Criando nova pauta: " + pautaDTO.getNome());
         Pauta pauta = new Pauta();
         pauta.setNome(pautaDTO.getNome());
@@ -63,7 +71,12 @@ public class PautaService {
     }
     
     @Transactional
-    public void deletarPauta(Long pautaId) {
+    public void deletarPauta(Long pautaId, UsuarioDTO usuarioLogado) {
+
+        if (!usuarioLogado.isAdmin()) {
+            LOGGER.warning("Usuário não tem permissão para deletar pauta");
+            throw new UnauthorizedAccessException("Usuário não tem permissão para deletar pauta");
+        }
         LOGGER.info("Deletando pauta com ID: " + pautaId);
         Pauta pauta = pautaRepository.findById(pautaId)
                 .orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada"));
@@ -73,7 +86,12 @@ public class PautaService {
     }
 
     @Transactional
-    public Pauta atualizarPauta(Long pautaId, PautaDTO pautaDTO) {
+    public Pauta atualizarPauta(Long pautaId, PautaDTO pautaDTO, UsuarioDTO usuarioLogado) {
+
+        if (!usuarioLogado.isAdmin()) {
+            LOGGER.warning("Usuário não tem permissão para atualizar pauta");
+            throw new UnauthorizedAccessException("Usuário não tem permissão para atualizar pauta");
+        }
         LOGGER.info("Atualizando pauta com ID: " + pautaId);
     
         Pauta pauta = pautaRepository.findById(pautaId)

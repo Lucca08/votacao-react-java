@@ -18,4 +18,7 @@ public class PautaDTO {
     @Size(max = 65, message = "Nome deve ter no máximo 65 caracteres")
     private String nome;
 
+
+
+
 }

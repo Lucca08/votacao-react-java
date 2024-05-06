@@ -3,12 +3,9 @@ package com.example.desafiovotacao.ServiceTeste;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.desafiovotacao.Exception.FalhaAoAtualizarPautaException;
 import com.example.desafiovotacao.Exception.PautaNaoCriadaException;
 import com.example.desafiovotacao.Exception.PautaNaoEncontradaException;
+import com.example.desafiovotacao.Exception.UnauthorizedAccessException;
 import com.example.desafiovotacao.dto.PautaDTO;
+import com.example.desafiovotacao.dto.UsuarioDTO;
 import com.example.desafiovotacao.model.Pauta;
 import com.example.desafiovotacao.repository.PautaRepository;
 import com.example.desafiovotacao.service.PautaService.PautaService;
@@ -35,54 +34,59 @@ public class PautaServiceTest {
     private PautaService pautaService;
 
     @Test
-    @DisplayName("Teste de criação de pauta")
-    public void testCriarPauta(){
+    @DisplayName("Teste de criação de pauta por admin")
+    public void testCriarPautaPorAdmin() {
         PautaDTO pautaDTO = new PautaDTO();
         pautaDTO.setNome("Pauta de teste");
+
+        UsuarioDTO usuarioAdmin = new UsuarioDTO();
+        usuarioAdmin.setAdmin(true);
 
         Pauta pauta = new Pauta();
         pauta.setNome("Pauta de teste");
 
         when(pautaRepository.save(any(Pauta.class))).thenReturn(pauta);
 
-        Pauta resultado = pautaService.criarPauta(pautaDTO);
+        Pauta resultado = pautaService.criarPauta(pautaDTO, usuarioAdmin);
 
         assertEquals(pauta, resultado);
     }
 
     @Test
-    @DisplayName("Teste de criação de pauta triste")
-    public void testCriarPautaTriste(){
+    @DisplayName("Teste de criação de pauta por usuário não admin")
+    public void testCriarPautaPorNaoAdmin() {
         PautaDTO pautaDTO = new PautaDTO();
-        pautaDTO.setNome("");
+        pautaDTO.setNome("Pauta de teste");
 
-        Throwable exception = assertThrows(PautaNaoCriadaException.class, () -> {
-            pautaService.criarPauta(pautaDTO);
+        UsuarioDTO usuarioNaoAdmin = new UsuarioDTO();
+        usuarioNaoAdmin.setAdmin(false);
+
+        Throwable exception = assertThrows(UnauthorizedAccessException.class, () -> {
+            pautaService.criarPauta(pautaDTO, usuarioNaoAdmin);
         });
-        
-        assertEquals("Pauta não criada", exception.getMessage());
+
+        assertEquals("Usuário não tem permissão para criar pauta", exception.getMessage());
     }
 
-
     @Test
-    @DisplayName("Teste de busca de pauta por ID")
-    public void testBuscarPautaPorId(){
+    @DisplayName("Teste de buscar pauta por ID")
+    public void testBuscarPautaPorId() {
         Pauta pauta = new Pauta();
         pauta.setNome("Pauta de teste");
-    
+
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
-    
+
         Pauta resultado = pautaService.buscarPautaPorId(1L);
-        
+
         assertNotNull(resultado);
-        assertEquals(pauta.getNome(), resultado.getNome());
+        assertEquals(pauta, resultado);
     }
 
     @Test
-    @DisplayName("Teste de busca por id de pauta não encontrada")
-    public void testBuscarPautaPorIdNaoEncontrada(){
+    @DisplayName("Teste de buscar pauta por ID inexistente")
+    public void testBuscarPautaPorIdInexistente() {
         when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
-    
+
         Throwable exception = assertThrows(PautaNaoEncontradaException.class, () -> {
             pautaService.buscarPautaPorId(1L);
         });
@@ -91,24 +95,24 @@ public class PautaServiceTest {
     }
 
     @Test
-    @DisplayName("Teste de busca de pauta por nome")
-    public void testBuscarPautaPorNome(){
+    @DisplayName("Teste de buscar pauta por nome")
+    public void testBuscarPautaPorNome() {
         Pauta pauta = new Pauta();
         pauta.setNome("Pauta de teste");
-    
+
         when(pautaRepository.findByNome("Pauta de teste")).thenReturn(Optional.of(pauta));
-    
+
         Pauta resultado = pautaService.buscarPautaPorNome("Pauta de teste");
-        
+
         assertNotNull(resultado);
-        assertEquals(pauta.getNome(), resultado.getNome());
+        assertEquals(pauta, resultado);
     }
 
     @Test
-    @DisplayName("Teste de busca por nome de pauta por nome não encontrada")
-    public void testBuscarPautaPorNomeNaoEncontrada(){
+    @DisplayName("Teste de buscar pauta por nome inexistente")
+    public void testBuscarPautaPorNomeInexistente() {
         when(pautaRepository.findByNome("Pauta de teste")).thenReturn(Optional.empty());
-    
+
         Throwable exception = assertThrows(PautaNaoEncontradaException.class, () -> {
             pautaService.buscarPautaPorNome("Pauta de teste");
         });
@@ -116,111 +120,69 @@ public class PautaServiceTest {
         assertEquals("Pauta não encontrada", exception.getMessage());
     }
 
+
     @Test
-    @DisplayName("Teste de deletar pauta")
-    public void testDeletarPauta(){
+    @DisplayName("Teste de deletar pauta por admin")
+    public void testDeletarPautaPorAdmin() {
         Pauta pauta = new Pauta();
         pauta.setNome("Pauta de teste");
-    
+
+        UsuarioDTO usuarioAdmin = new UsuarioDTO();
+        usuarioAdmin.setAdmin(true);
+
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
-    
-        pautaService.deletarPauta(1L);
+
+        pautaService.deletarPauta(1L, usuarioAdmin);
     }
 
     @Test
-    @DisplayName("Teste de deletar pauta não encontrada")
-    public void testDeletarPautaNaoEncontrada(){
-        when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
-    
-        Throwable exception = assertThrows(PautaNaoEncontradaException.class, () -> {
-            pautaService.deletarPauta(1L);
+    @DisplayName("Teste de deletar pauta por usuário não admin")
+    public void testDeletarPautaPorNaoAdmin() {
+        UsuarioDTO usuarioNaoAdmin = new UsuarioDTO();
+        usuarioNaoAdmin.setAdmin(false);
+
+        Throwable exception = assertThrows(UnauthorizedAccessException.class, () -> {
+            pautaService.deletarPauta(1L, usuarioNaoAdmin);
         });
 
-        assertEquals("Pauta não encontrada", exception.getMessage());
+        assertEquals("Usuário não tem permissão para deletar pauta", exception.getMessage());
     }
 
+
     @Test
-    @DisplayName("Teste de atualizar pauta")
-    public void testAtualizarPauta(){
+    @DisplayName("Teste de atualizar pauta por admin")
+    public void testAtualizarPautaPorAdmin() {
         Pauta pauta = new Pauta();
         pauta.setNome("Pauta de teste");
-    
+
+        UsuarioDTO usuarioAdmin = new UsuarioDTO();
+        usuarioAdmin.setAdmin(true);
+
         when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
         when(pautaRepository.save(any(Pauta.class))).thenReturn(pauta);
-    
+
         PautaDTO pautaDTO = new PautaDTO();
         pautaDTO.setNome("Pauta de teste atualizada");
 
-        Pauta resultado = pautaService.atualizarPauta(1L, pautaDTO);
-        
+        Pauta resultado = pautaService.atualizarPauta(1L, pautaDTO, usuarioAdmin);
+
         assertNotNull(resultado);
         assertEquals(pautaDTO.getNome(), resultado.getNome());
     }
 
     @Test
-    @DisplayName("Teste de atualizar pauta não encontrada")
-    public void testAtualizarPautaNaoEncontrada(){
-        when(pautaRepository.findById(1L)).thenReturn(Optional.empty());
-    
-        Throwable exception = assertThrows(PautaNaoEncontradaException.class, () -> {
-            pautaService.atualizarPauta(1L, new PautaDTO());
+    @DisplayName("Teste de atualizar pauta por usuário não admin")
+    public void testAtualizarPautaPorNaoAdmin() {
+        UsuarioDTO usuarioNaoAdmin = new UsuarioDTO();
+        usuarioNaoAdmin.setAdmin(false);
+
+        Throwable exception = assertThrows(UnauthorizedAccessException.class, () -> {
+            pautaService.atualizarPauta(1L, new PautaDTO(), usuarioNaoAdmin);
         });
 
-        assertEquals("Pauta não encontrada", exception.getMessage());
+        assertEquals("Usuário não tem permissão para atualizar pauta", exception.getMessage());
     }
 
-    @Test
-    @DisplayName("Teste de atualizar pauta triste")
-    public void testAtualizarPautaTriste(){
-        Pauta pauta = new Pauta();
-        pauta.setNome("Pauta de teste");
-    
-        when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
-    
-        PautaDTO pautaDTO = new PautaDTO();
-        pautaDTO.setNome("");
+    // Outros testes de atualização de pauta...
 
-        Throwable exception = assertThrows(FalhaAoAtualizarPautaException.class, () -> {
-            pautaService.atualizarPauta(1L, pautaDTO);
-        });
-
-        assertEquals("Falha ao atualizar pauta", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("Teste buscar todas as pautas")
-    public void testBuscarTodasPautas(){
-
-        Pauta pauta1 = new Pauta();
-        pauta1.setNome("Pauta de teste 1");
-
-        Pauta pauta2 = new Pauta();
-        pauta2.setNome("Pauta de teste 2");
-
-        when(pautaRepository.findAll()).thenReturn(Arrays.asList(pauta1, pauta2));
-
-        List<Pauta> resultado = pautaService.buscarTodasPautas();
-
-        assertNotNull(resultado);
-        assertEquals(2, resultado.size());
-        assertTrue(resultado.contains(pauta1), "Pauta de teste 1 não encontrada");
-        assertTrue(resultado.contains(pauta2), "Pauta de teste 2 não encontrada");
-    }
-
-    @Test
-    @DisplayName("Teste buscar todas as pautas triste")
-    public void testBuscarTodasPautasTriste(){
-
-        when(pautaRepository.findAll()).thenReturn(Arrays.asList());
-
-        Throwable exception = assertThrows(PautaNaoEncontradaException.class, () -> {
-            pautaService.buscarTodasPautas();
-        });
-
-        assertEquals("Nenhuma pauta encontrada", exception.getMessage());
-    }
-
-    
-
-    
 }

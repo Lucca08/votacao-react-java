@@ -11,10 +11,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VotacaoRepository extends JpaRepository<Votacao, Long> {
     List<Votacao> findByVoto(boolean voto);
-    List<Votacao> findByUsuario(Usuario usuario);
-    List<Votacao> findByVotoAndUsuario(boolean voto, Usuario usuario);
-    Optional<Votacao> findByPautaIdAndUsuarioId(Long pautaId, Long usuarioId);
-    List<Votacao> findByPautaId(Long idPauta);
+    List<Votacao> findByPautaPautaId(Long pautaId);
+    List<Votacao> findByUsuarioUsuarioId(Long usuarioId);
+    Optional<Votacao> findByPautaPautaIdAndUsuarioUsuarioId(Long pautaId, Long usuarioId); // Alteração aqui
+    Optional<Votacao> findByVotacaoId(Long votacaoId);
 
 
 }

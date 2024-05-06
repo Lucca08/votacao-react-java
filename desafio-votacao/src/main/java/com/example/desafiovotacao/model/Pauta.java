@@ -20,15 +20,16 @@ import lombok.Setter;
 @Getter
 @Entity
 public class Pauta {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pauta")
-    private long pautaId;
+    private Long pautaId;
 
     @Column(name = "nome_pauta")
     private String nome;
 
-    @OneToMany(mappedBy = "pauta", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pauta", cascade = CascadeType.REMOVE)
     private List<Votacao> votacoes;
 
 

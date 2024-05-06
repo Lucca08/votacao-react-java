@@ -39,7 +39,7 @@ public class VotacaoServiceTest {
         voto.setPauta(new Pauta());
         voto.setVotacaoId(1L);
     
-        when(votacaoRepository.findByPautaIdAndUsuarioId(1L, 1L)).thenReturn(Optional.empty());
+        when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.empty());
     
         votacaoService.votar(1L, 1L, true); 
     
@@ -53,7 +53,7 @@ public class VotacaoServiceTest {
         voto.setPauta(new Pauta());
         voto.setVotacaoId(1L);
     
-        when(votacaoRepository.findByPautaIdAndUsuarioId(1L, 1L)).thenReturn(Optional.of(voto));
+        when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.of(voto));
     
         UsuarioJaVotouNaPautaException exception = assertThrows(UsuarioJaVotouNaPautaException.class, () -> {
             votacaoService.votar(1L, 1L, true);
@@ -78,7 +78,7 @@ public class VotacaoServiceTest {
 
         List<Votacao> votos = List.of(voto1, voto2, voto3);
     
-        when(votacaoRepository.findByPautaId(idPauta)).thenReturn(votos);
+        when(votacaoRepository.findByPautaPautaId(idPauta)).thenReturn(votos);
     
         int totalVotos = votacaoService.contarVotos(idPauta);
     
@@ -92,7 +92,7 @@ public class VotacaoServiceTest {
         votacao.setPauta(new Pauta());
         votacao.setVotacaoId(1L);
     
-        when(votacaoRepository.findByPautaIdAndUsuarioId(1L, 1L)).thenReturn(Optional.of(votacao));
+        when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.of(votacao));
 
         UsuarioJaVotouNaPautaException exception = assertThrows(UsuarioJaVotouNaPautaException.class, () -> {
             votacaoService.votar(1L, 1L, true);
@@ -110,7 +110,7 @@ public class VotacaoServiceTest {
         voto.setPauta(new Pauta());
         voto.setVotacaoId(1L);
     
-        when(votacaoRepository.findByPautaIdAndUsuarioId(1L, 1L)).thenReturn(Optional.empty());
+        when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.empty());
 
         UsuarioNaoEncontradoException exception =assertThrows(UsuarioNaoEncontradoException.class, () -> {
             votacaoService.atualizarVoto(1L, 1L, true);
@@ -126,7 +126,7 @@ public class VotacaoServiceTest {
         voto.setPauta(new Pauta());
         voto.setVotacaoId(1L);
     
-        when(votacaoRepository.findByPautaIdAndUsuarioId(1L, 1L)).thenReturn(Optional.of(voto));
+        when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.of(voto));
         
         assertFalse(votacaoService.usuarioPodeVotar(1L, 1L));
     }
@@ -138,7 +138,7 @@ public class VotacaoServiceTest {
     voto.setPauta(new Pauta());
     voto.setVotacaoId(1L);
 
-    when(votacaoRepository.findByPautaIdAndUsuarioId(1L, 1L)).thenReturn(Optional.of(voto));
+    when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.of(voto));
 
     votacaoService.atualizarVoto(1L, 1L, false);
 
@@ -154,7 +154,7 @@ public class VotacaoServiceTest {
     voto.setPauta(new Pauta());
     voto.setVotacaoId(1L);
     
-    when(votacaoRepository.findByPautaIdAndUsuarioId(1L, 1L)).thenReturn(Optional.empty());
+    when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.empty());
     
     UsuarioNaoEncontradoException exception = assertThrows(UsuarioNaoEncontradoException.class, () -> {
         votacaoService.atualizarVoto(1L, 1L, false);

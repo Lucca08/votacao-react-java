@@ -1,5 +1,6 @@
 package com.example.desafiovotacao.service.UsuarioService;
 
+import com.example.desafiovotacao.Exception.UnauthorizedAccessException;
 import com.example.desafiovotacao.Exception.UsuarioExistenteException;
 import com.example.desafiovotacao.model.Usuario;
 import com.example.desafiovotacao.repository.UsuarioRepository;
@@ -32,17 +33,33 @@ public class UsuarioService {
     }
 
     if (usuarioDTO.isAdmin()) {
-        usuarioDTO.setAdmin(false);
+        usuarioDTO.setAdmin(true);
     }
 
     Usuario usuario = new Usuario();
     usuario.setNome(usuarioDTO.getNome());
+    usuario.setSenha(usuarioDTO.getSenha());
     usuario.setCpf(usuarioDTO.getCpf());
     usuario.setEmail(usuarioDTO.getEmail());
     usuario.setAdmin(usuarioDTO.isAdmin());
 
     return usuarioRepository.save(usuario);
     }
+
+
+    @Transactional(readOnly = true)
+    public Usuario login(UsuarioDTO usuarioDTO) {
+    Usuario usuario = usuarioRepository.findByEmail(usuarioDTO.getEmail())
+        .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o e-mail: " + usuarioDTO.getEmail()));
+
+    if (!usuario.getCpf().equals(usuarioDTO.getCpf())) {
+        throw new UnauthorizedAccessException("Credenciais inválidas");
+    }
+
+    return usuario;
+}
+
+
 
     @Transactional(readOnly = true)
     public Usuario buscarUsuarioPorId(long usuarioId) {
