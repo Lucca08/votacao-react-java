@@ -14,7 +14,6 @@ import com.example.desafiovotacao.Exception.UnauthorizedAccessException;
 import com.example.desafiovotacao.dto.PautaDTO;
 import com.example.desafiovotacao.dto.UsuarioDTO;
 import com.example.desafiovotacao.model.Pauta;
-import com.example.desafiovotacao.model.Usuario;
 import com.example.desafiovotacao.repository.PautaRepository;
 
 

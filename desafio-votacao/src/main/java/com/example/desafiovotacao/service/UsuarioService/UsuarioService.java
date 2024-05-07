@@ -92,24 +92,23 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void atualizarUsuario(Usuario usuarioAtualizado) {
-        Usuario usuario = usuarioRepository.findById(usuarioAtualizado.getUsuarioId())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o ID: " + usuarioAtualizado.getUsuarioId()));
-        
-         if (usuarioRepository.existsByCpf(usuario.getCpf())) {
-             throw new UsuarioExistenteException("Já existe um usuário cadastrado com o CPF: " + usuario.getCpf());
-            }
-        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-            throw new UsuarioExistenteException("Já existe um usuário cadastrado com o e-mail: " + usuario.getEmail());
-           }
+    public void atualizarUsuario(Usuario usuario) {
+    Usuario usuarioExistente = usuarioRepository.findById(usuario.getUsuarioId())
+            .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o ID: " + usuario.getUsuarioId()));
+    
+    if (usuarioRepository.existsByCpf(usuario.getCpf())) {
+        throw new UsuarioExistenteException("Já existe um usuário cadastrado com o CPF: " + usuario.getCpf());
+    }
+    
+    if (usuarioRepository.existsByCpf(usuario.getEmail())) {
+        throw new UsuarioExistenteException("Já existe um usuário cadastrado com o e-mail: " + usuario.getEmail());
+    }
 
-        usuario.setNome(usuarioAtualizado.getNome());
-        usuario.setCpf(usuarioAtualizado.getCpf());
-        usuario.setEmail(usuarioAtualizado.getEmail());
-        usuario.setAdmin(usuarioAtualizado.isAdmin());
-        
-        usuarioRepository.save(usuario);
-
-
-        }
+    usuarioExistente.setNome(usuario.getNome());
+    usuarioExistente.setCpf(usuario.getCpf());
+    usuarioExistente.setEmail(usuario.getEmail());
+    usuarioExistente.setAdmin(usuario.isAdmin());
+    
+    usuarioRepository.save(usuarioExistente);
+    }
 }
