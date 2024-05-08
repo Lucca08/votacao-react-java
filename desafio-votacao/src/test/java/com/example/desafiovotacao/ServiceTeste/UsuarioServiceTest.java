@@ -37,92 +37,92 @@ public class UsuarioServiceTest {
     @Test
     @DisplayName("Teste de criação de usuário")
     public void testCriarUsuario(){
-    UsuarioDTO usuarioDTO = new UsuarioDTO();
-    usuarioDTO.setCpf("12345678900");
-    usuarioDTO.setEmail("lucca@gmail.com");
-    usuarioDTO.setNome("Usuário de teste");
-    usuarioDTO.setAdmin(false);
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setCpf("12345678900");
+        usuarioDTO.setEmail("lucca@gmail.com");
+        usuarioDTO.setNome("Usuário de teste");
+        usuarioDTO.setAdmin(false);
 
-    Usuario usuarioSalvo = new Usuario();
-    usuarioSalvo.setUsuarioId(1L);
-    usuarioSalvo.setCpf(usuarioDTO.getCpf());
-    usuarioSalvo.setEmail(usuarioDTO.getEmail());
-    usuarioSalvo.setNome(usuarioDTO.getNome());
-    usuarioSalvo.setAdmin(usuarioDTO.isAdmin());
+        Usuario usuarioSalvo = new Usuario();
+        usuarioSalvo.setUsuarioId(1L);
+        usuarioSalvo.setCpf(usuarioDTO.getCpf());
+        usuarioSalvo.setEmail(usuarioDTO.getEmail());
+        usuarioSalvo.setNome(usuarioDTO.getNome());
+        usuarioSalvo.setAdmin(usuarioDTO.isAdmin());
 
-    when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioSalvo);
-    
-    Usuario resultado = usuarioService.criarUsuario(usuarioDTO);
-    
-    assertEquals(usuarioDTO.getNome(), resultado.getNome());
-    assertEquals(usuarioDTO.getCpf(), resultado.getCpf());
-    assertEquals(usuarioDTO.getEmail(), resultado.getEmail());
-    assertEquals(usuarioDTO.isAdmin(), resultado.isAdmin());
-    assertTrue(resultado.getUsuarioId() > 0);
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioSalvo);
+        
+        Usuario resultado = usuarioService.criarUsuario(usuarioDTO);
+        
+        assertEquals(usuarioDTO.getNome(), resultado.getNome());
+        assertEquals(usuarioDTO.getCpf(), resultado.getCpf());
+        assertEquals(usuarioDTO.getEmail(), resultado.getEmail());
+        assertEquals(usuarioDTO.isAdmin(), resultado.isAdmin());
+        assertTrue(resultado.getUsuarioId() > 0);
     }
 
     @Test
     @DisplayName("Teste de criação de usuário com CPF existente")
     public void testCriarUsuarioComCpfExistente(){
-    UsuarioDTO usuarioDTO = new UsuarioDTO();
-    usuarioDTO.setCpf("12345678900");
-    usuarioDTO.setEmail("lucca@gmail.com");
-    usuarioDTO.setNome("Usuário de teste");
-    usuarioDTO.setAdmin(false);
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setCpf("12345678900");
+        usuarioDTO.setEmail("lucca@gmail.com");
+        usuarioDTO.setNome("Usuário de teste");
+        usuarioDTO.setAdmin(false);
 
-    when(usuarioRepository.existsByCpf(usuarioDTO.getCpf())).thenReturn(true);
+        when(usuarioRepository.existsByCpf(usuarioDTO.getCpf())).thenReturn(true);
 
-    Throwable exception = assertThrows(UsuarioExistenteException.class, () -> {
-        usuarioService.criarUsuario(usuarioDTO);
-    });
+        Throwable exception = assertThrows(UsuarioExistenteException.class, () -> {
+            usuarioService.criarUsuario(usuarioDTO);
+        });
 
-    assertEquals("Já existe um usuário cadastrado com o CPF: " + usuarioDTO.getCpf(), exception.getMessage());
+        assertEquals("Já existe um usuário cadastrado com o CPF: " + usuarioDTO.getCpf(), exception.getMessage());
     }
 
     @Test
     @DisplayName("Teste de criação de usuário com e-mail existente")
     public void testCriarUsuarioComEmailExistente(){
-    UsuarioDTO usuarioDTO = new UsuarioDTO();
-    usuarioDTO.setCpf("12345678900");
-    usuarioDTO.setEmail("lucca@gmail.com");
-    usuarioDTO.setNome("Usuário de teste");
-    usuarioDTO.setAdmin(false);
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setCpf("12345678900");
+        usuarioDTO.setEmail("lucca@gmail.com");
+        usuarioDTO.setNome("Usuário de teste");
+        usuarioDTO.setAdmin(false);
 
-    when(usuarioRepository.existsByCpf(usuarioDTO.getCpf())).thenReturn(false);
-    when(usuarioRepository.existsByEmail(usuarioDTO.getEmail())).thenReturn(true);
+        when(usuarioRepository.existsByCpf(usuarioDTO.getCpf())).thenReturn(false);
+        when(usuarioRepository.existsByEmail(usuarioDTO.getEmail())).thenReturn(true);
 
-    Throwable exception = assertThrows(UsuarioExistenteException.class, () -> {
-        usuarioService.criarUsuario(usuarioDTO);
-    });
+        Throwable exception = assertThrows(UsuarioExistenteException.class, () -> {
+            usuarioService.criarUsuario(usuarioDTO);
+        });
 
-    assertEquals("Já existe um usuário cadastrado com o e-mail: " + usuarioDTO.getEmail(), exception.getMessage());
+        assertEquals("Já existe um usuário cadastrado com o e-mail: " + usuarioDTO.getEmail(), exception.getMessage());
     }
 
     @Test
     @DisplayName("Teste de criação de usuário admin")
     public void testCriarUsuarioAdmin(){
-    UsuarioDTO usuarioDTO = new UsuarioDTO();
-    usuarioDTO.setCpf("12345678900");
-    usuarioDTO.setEmail("lucca@gmail.com");
-    usuarioDTO.setNome("Usuário de teste");
-    usuarioDTO.setAdmin(true);
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setCpf("12345678900");
+        usuarioDTO.setEmail("lucca@gmail.com");
+        usuarioDTO.setNome("Usuário de teste");
+        usuarioDTO.setAdmin(true);
 
-    Usuario usuarioSalvo = new Usuario();
-    usuarioSalvo.setUsuarioId(1L);
-    usuarioSalvo.setCpf(usuarioDTO.getCpf());
-    usuarioSalvo.setEmail(usuarioDTO.getEmail());
-    usuarioSalvo.setNome(usuarioDTO.getNome());
-    usuarioSalvo.setAdmin(false);
+        Usuario usuarioSalvo = new Usuario();
+        usuarioSalvo.setUsuarioId(1L);
+        usuarioSalvo.setCpf(usuarioDTO.getCpf());
+        usuarioSalvo.setEmail(usuarioDTO.getEmail());
+        usuarioSalvo.setNome(usuarioDTO.getNome());
+        usuarioSalvo.setAdmin(false);
 
-    when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioSalvo);
-    
-    Usuario resultado = usuarioService.criarUsuario(usuarioDTO);
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioSalvo);
+        
+        Usuario resultado = usuarioService.criarUsuario(usuarioDTO);
 
-    assertEquals(usuarioDTO.getNome(), resultado.getNome());
-    assertEquals(usuarioDTO.getCpf(), resultado.getCpf());
-    assertEquals(usuarioDTO.getEmail(), resultado.getEmail());
-    assertEquals(false, resultado.isAdmin());
-    assertTrue(resultado.getUsuarioId() > 0);
+        assertEquals(usuarioDTO.getNome(), resultado.getNome());
+        assertEquals(usuarioDTO.getCpf(), resultado.getCpf());
+        assertEquals(usuarioDTO.getEmail(), resultado.getEmail());
+        assertEquals(false, resultado.isAdmin());
+        assertTrue(resultado.getUsuarioId() > 0);
     }
 
     @Test
@@ -217,16 +217,15 @@ public class UsuarioServiceTest {
         usuario.setCpf("12345678900");
         usuario.setEmail("lucca@gmail.com");
 
-        Usuario usuarioAtualizado = new Usuario();
-        usuarioAtualizado.setUsuarioId(1L);
+        UsuarioDTO usuarioAtualizado = new UsuarioDTO();
         usuarioAtualizado.setNome("Usuário de teste atualizado");
         usuarioAtualizado.setCpf("12345678900");
         usuarioAtualizado.setEmail("lucca@gmail.com");
 
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioAtualizado);
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
-        usuarioService.atualizarUsuario(usuarioAtualizado);
+        usuarioService.atualizarUsuario(1L, usuarioAtualizado);
 
         assertEquals(usuarioAtualizado.getNome(), usuario.getNome());
         assertEquals(usuarioAtualizado.getCpf(), usuario.getCpf());
@@ -244,17 +243,16 @@ public class UsuarioServiceTest {
         usuario.setCpf("12345678900");
         usuario.setEmail("lucca@gmail.com");
 
-        Usuario usuarioAtualizado = new Usuario();
-        usuarioAtualizado.setUsuarioId(1L);
+        UsuarioDTO usuarioAtualizado = new UsuarioDTO();
         usuarioAtualizado.setNome("Usuário de teste atualizado");
         usuarioAtualizado.setCpf("12345678900");
         usuarioAtualizado.setEmail("lucca@gmail.com");
 
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        when(usuarioRepository.existsByCpf(usuarioAtualizado.getCpf())).thenReturn(true);
+        when(usuarioRepository.existsByCpfAndUsuarioId(usuarioAtualizado.getCpf(),1L)).thenReturn(true);
 
         Throwable exception = assertThrows(UsuarioExistenteException.class, () -> {
-            usuarioService.atualizarUsuario(usuarioAtualizado);
+            usuarioService.atualizarUsuario(1L, usuarioAtualizado);
         });
 
         assertEquals("Já existe um usuário cadastrado com o CPF: " + usuarioAtualizado.getCpf(), exception.getMessage());
@@ -263,36 +261,34 @@ public class UsuarioServiceTest {
 
     @Test
     @DisplayName("Teste de atualização de usuário com e-mail existente")
-    public void testAtualizarUsuarioComEmailExistente(){
+    public void testAtualizarUsuarioComEmailExistente() {
         Usuario usuario = new Usuario();
         usuario.setUsuarioId(1L);
         usuario.setNome("Usuário de teste");
         usuario.setCpf("12345678900");
         usuario.setEmail("lucca@gmail.com");
-
-        Usuario usuarioAtualizado = new Usuario();
-        usuarioAtualizado.setUsuarioId(1L);
+    
+        UsuarioDTO usuarioAtualizado = new UsuarioDTO();
         usuarioAtualizado.setNome("Usuário de teste atualizado");
-        usuarioAtualizado.setCpf("12345678900");
+        usuarioAtualizado.setCpf("12345678901");
         usuarioAtualizado.setEmail("lucca@gmail.com");
-
+    
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        when(usuarioRepository.existsByCpf(usuarioAtualizado.getCpf())).thenReturn(false);
-        when(usuarioRepository.existsByEmail(usuarioAtualizado.getEmail())).thenReturn(true);
-
+        when(usuarioRepository.existsByEmailAndUsuarioId(usuarioAtualizado.getEmail(), 1L)).thenReturn(true);
+    
         Throwable exception = assertThrows(UsuarioExistenteException.class, () -> {
-            usuarioService.atualizarUsuario(usuarioAtualizado);
+            usuarioService.atualizarUsuario(1L, usuarioAtualizado);
         });
-
+    
         assertEquals("Já existe um usuário cadastrado com o e-mail: " + usuarioAtualizado.getEmail(), exception.getMessage());
-
     }
+    
+
 
     @Test
     @DisplayName("Teste de atualização de usuário não encontrado")
     public void testAtualizarUsuarioNaoEncontrado(){
-        Usuario usuarioAtualizado = new Usuario();
-        usuarioAtualizado.setUsuarioId(1L);
+        UsuarioDTO usuarioAtualizado = new UsuarioDTO();
         usuarioAtualizado.setNome("Usuário de teste atualizado");
         usuarioAtualizado.setCpf("12345678900");
         usuarioAtualizado.setEmail("lucca@gmail.com");
@@ -300,7 +296,7 @@ public class UsuarioServiceTest {
         when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
 
         Throwable exception = assertThrows(UsuarioNaoEncontradoException.class, () -> {
-            usuarioService.atualizarUsuario(usuarioAtualizado);
+            usuarioService.atualizarUsuario(1L, usuarioAtualizado);
         });
 
         assertEquals("Usuário não encontrado com o ID: 1", exception.getMessage());
@@ -308,29 +304,25 @@ public class UsuarioServiceTest {
 
     @Test
     @DisplayName("Teste de deletar usuário")
-    public void testDeletarUsuario(){
+    public void testDeletarUsuario() {
         Usuario usuario = new Usuario();
         usuario.setUsuarioId(1L);
         usuario.setNome("Usuário de teste");
         usuario.setCpf("12345678900");
         usuario.setEmail("luccabibianogarcia02novo@gmail.com");
-
+    
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setNome("Usuário de teste");
         usuarioDTO.setCpf("12345678900");
         usuarioDTO.setEmail("luccabibianogarcia02novo@gmail.com");
-
-        when(usuarioRepository.findByEmail(usuarioDTO.getEmail())).thenReturn(Optional.of(usuario));
-
-        Usuario resultado = usuarioService.deletarUsuarioLogado(usuarioDTO);
-
-        assertEquals(usuario.getNome(), resultado.getNome());
-        assertEquals(usuario.getCpf(), resultado.getCpf());
-        assertEquals(usuario.getEmail(), resultado.getEmail());
-        assertEquals(usuario.isAdmin(), resultado.isAdmin());
-
+    
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+    
+        usuarioService.deletarUsuario(1L);
+    
+        verify(usuarioRepository, times(1)).delete(usuario);
     }
-
+    
     @Test
     @DisplayName("Teste de deletar usuário com sucesso")
     public void testDeletarUsuarioComSucesso() {
@@ -339,33 +331,24 @@ public class UsuarioServiceTest {
         usuario.setNome("Usuário de teste");
         usuario.setCpf("12345678900");
         usuario.setEmail("luccabibianogarcia02novo@gmail.com");
-
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setNome("Usuário de teste");
-        usuarioDTO.setCpf("12345678900");
-        usuarioDTO.setEmail("luccabibianogarcia02novo@gmail.com");
-
-        when(usuarioRepository.findByEmail(usuarioDTO.getEmail())).thenReturn(Optional.of(usuario));
-
-        Usuario resultado = usuarioService.deletarUsuarioLogado(usuarioDTO);
-
-        assertEquals(usuario, resultado);
+    
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+    
+        usuarioService.deletarUsuario(1L);
+    
         verify(usuarioRepository, times(1)).delete(usuario);
     }
 
     @Test
     @DisplayName("Teste de deletar usuário quando o usuário não é encontrado")
     public void testDeletarUsuarioUsuarioNaoEncontrado() {
-        // Arrange
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setEmail("usuario@test.com");
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
 
-        when(usuarioRepository.findByEmail(usuarioDTO.getEmail())).thenReturn(Optional.empty());
-
-        // Act & Assert
         assertThrows(UsuarioNaoEncontradoException.class, () -> {
-            usuarioService.deletarUsuarioLogado(usuarioDTO);
+        usuarioService.deletarUsuario(1L);
         });
         verify(usuarioRepository, never()).delete(any());
-    }
+}
+
+    
 }

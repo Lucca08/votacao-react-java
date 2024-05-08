@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.desafiovotacao.Exception.FalhaAoAtualizarPautaException;
-import com.example.desafiovotacao.Exception.PautaNaoCriadaException;
 import com.example.desafiovotacao.Exception.PautaNaoEncontradaException;
 import com.example.desafiovotacao.Exception.UnauthorizedAccessException;
 import com.example.desafiovotacao.dto.PautaDTO;
@@ -41,10 +40,7 @@ public class PautaService {
         pauta.setNome(pautaDTO.getNome());
         Pauta novaPauta = pautaRepository.save(pauta);
         
-        if (novaPauta == null) {
-            LOGGER.warning("Pauta não criada");
-            throw new PautaNaoCriadaException("Pauta não criada");
-        }  
+
         LOGGER.info("Pauta criada com sucesso: " + novaPauta.getPautaId());
         return novaPauta;
     }
@@ -119,5 +115,6 @@ public class PautaService {
         return pautas;
     }
 
+   
 
 }

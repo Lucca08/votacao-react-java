@@ -14,8 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.desafiovotacao.Exception.FalhaAoAtualizarPautaException;
-import com.example.desafiovotacao.Exception.PautaNaoCriadaException;
 import com.example.desafiovotacao.Exception.PautaNaoEncontradaException;
 import com.example.desafiovotacao.Exception.UnauthorizedAccessException;
 import com.example.desafiovotacao.dto.PautaDTO;

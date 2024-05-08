@@ -2,7 +2,6 @@ package com.example.desafiovotacao.Controller;
 
 
 import com.example.desafiovotacao.dto.VotacaoDTO;
-import com.example.desafiovotacao.model.Votacao;
 import com.example.desafiovotacao.service.VotacaoService.VotacaoService;
 
 import jakarta.validation.Valid;

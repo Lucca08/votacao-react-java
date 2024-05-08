@@ -59,18 +59,13 @@ public class UsuarioService {
     return usuario;
 }
 
-    @Transactional(readOnly = true)
-    public Usuario deletarUsuarioLogado(UsuarioDTO usuarioDTO) {
-        Usuario usuario = usuarioRepository.findByEmail(usuarioDTO.getEmail())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o e-mail: " + usuarioDTO.getEmail()));
+@Transactional
+public void deletarUsuario(Long id) {
+    Usuario usuario = usuarioRepository.findById(id)
+            .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o ID: " + id));
+    usuarioRepository.delete(usuario);
+}
 
-        if (!usuario.getCpf().equals(usuarioDTO.getCpf())) {
-            throw new UnauthorizedAccessException("Credenciais inválidas");
-        }
-
-        usuarioRepository.delete(usuario);
-        return usuario;
-    }
 
     
     @Transactional(readOnly = true)
@@ -92,23 +87,28 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void atualizarUsuario(Usuario usuario) {
-    Usuario usuarioExistente = usuarioRepository.findById(usuario.getUsuarioId())
-            .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o ID: " + usuario.getUsuarioId()));
+    public void atualizarUsuario(Long id, UsuarioDTO usuarioDTO) {
+    Usuario usuarioExistente = usuarioRepository.findById(id)
+            .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o ID: " + id));
     
-    if (usuarioRepository.existsByCpf(usuario.getCpf())) {
-        throw new UsuarioExistenteException("Já existe um usuário cadastrado com o CPF: " + usuario.getCpf());
+    // Verifica se há outro usuário com o mesmo CPF, excluindo o próprio usuário a ser atualizado
+    if (usuarioRepository.existsByCpfAndUsuarioId(usuarioDTO.getCpf(), id)) {
+        throw new UsuarioExistenteException("Já existe um usuário cadastrado com o CPF: " + usuarioDTO.getCpf());
     }
     
-    if (usuarioRepository.existsByCpf(usuario.getEmail())) {
-        throw new UsuarioExistenteException("Já existe um usuário cadastrado com o e-mail: " + usuario.getEmail());
+    // Verifica se há outro usuário com o mesmo e-mail, excluindo o próprio usuário a ser atualizado
+    if (usuarioRepository.existsByEmailAndUsuarioId(usuarioDTO.getEmail(), id)) {
+        throw new UsuarioExistenteException("Já existe um usuário cadastrado com o e-mail: " + usuarioDTO.getEmail());
     }
 
-    usuarioExistente.setNome(usuario.getNome());
-    usuarioExistente.setCpf(usuario.getCpf());
-    usuarioExistente.setEmail(usuario.getEmail());
-    usuarioExistente.setAdmin(usuario.isAdmin());
+    // Atualiza os dados do usuário existente com os novos dados fornecidos
+    usuarioExistente.setNome(usuarioDTO.getNome());
+    usuarioExistente.setCpf(usuarioDTO.getCpf());
+    usuarioExistente.setEmail(usuarioDTO.getEmail());
+    usuarioExistente.setAdmin(usuarioDTO.isAdmin());
     
+    // Salva as alterações no banco de dados
     usuarioRepository.save(usuarioExistente);
-    }
+}
+
 }

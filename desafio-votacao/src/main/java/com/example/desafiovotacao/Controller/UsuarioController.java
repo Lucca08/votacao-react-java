@@ -76,14 +76,27 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
-        try {
-            usuarioService.atualizarUsuario(usuario);
-            return ResponseEntity.ok(usuario);
-        } catch (UsuarioNaoEncontradoException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<UsuarioDTO> atualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
+    try {
+        usuarioService.atualizarUsuario(id, usuarioDTO);
+        return ResponseEntity.ok(usuarioDTO);
+    } catch (UsuarioNaoEncontradoException e) {
+        return ResponseEntity.notFound().build();
+    } catch (UsuarioExistenteException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
+    try {
+        usuarioService.deletarUsuario(id);
+        return ResponseEntity.noContent().build();
+    } catch (UsuarioNaoEncontradoException e) {
+        return ResponseEntity.notFound().build();
+    }
+    }
+
 
     private UsuarioDTO mapToUsuarioDTO(Usuario usuario) {
         UsuarioDTO usuarioDTO = new UsuarioDTO();

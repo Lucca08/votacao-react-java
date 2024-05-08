@@ -13,7 +13,7 @@ public interface VotacaoRepository extends JpaRepository<Votacao, Long> {
     List<Votacao> findByVoto(boolean voto);
     List<Votacao> findByPautaPautaId(Long pautaId);
     List<Votacao> findByUsuarioUsuarioId(Long usuarioId);
-    Optional<Votacao> findByPautaPautaIdAndUsuarioUsuarioId(Long pautaId, Long usuarioId); // Alteração aqui
+    Optional<Votacao> findByPautaPautaIdAndUsuarioUsuarioId(Long pautaId, Long usuarioId); 
     Optional<Votacao> findByVotacaoId(Long votacaoId);
 
 

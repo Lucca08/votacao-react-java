@@ -2,7 +2,6 @@ package com.example.desafiovotacao.ServiceTeste;
 
 import com.example.desafiovotacao.Exception.UsuarioJaVotouNaPautaException;
 import com.example.desafiovotacao.Exception.UsuarioNaoEncontradoException;
-import com.example.desafiovotacao.dto.VotacaoDTO;
 import com.example.desafiovotacao.model.Pauta;
 import com.example.desafiovotacao.model.Votacao;
 import com.example.desafiovotacao.repository.VotacaoRepository;
@@ -133,35 +132,35 @@ public class VotacaoServiceTest {
 
     @Test
     public void testAtualizarVoto_UsuarioEncontrado_AtualizaVoto() {
-    Votacao voto = new Votacao();
-    voto.setVoto(true);
-    voto.setPauta(new Pauta());
-    voto.setVotacaoId(1L);
+        Votacao voto = new Votacao();
+        voto.setVoto(true);
+        voto.setPauta(new Pauta());
+        voto.setVotacaoId(1L);
 
-    when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.of(voto));
+        when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.of(voto));
 
-    votacaoService.atualizarVoto(1L, 1L, false);
+        votacaoService.atualizarVoto(1L, 1L, false);
 
-    assertFalse(voto.isVoto());
-    verify(votacaoRepository).save(voto);
+        assertFalse(voto.isVoto());
+        verify(votacaoRepository).save(voto);
 
     }
 
     @Test
     public void testAtualizarVoto_UsuarioNaoEncontrado_LancaExcecao() {
-    Votacao voto = new Votacao();
-    voto.setVoto(true);
-    voto.setPauta(new Pauta());
-    voto.setVotacaoId(1L);
-    
-    when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.empty());
-    
-    UsuarioNaoEncontradoException exception = assertThrows(UsuarioNaoEncontradoException.class, () -> {
-        votacaoService.atualizarVoto(1L, 1L, false);
-    });
+        Votacao voto = new Votacao();
+        voto.setVoto(true);
+        voto.setPauta(new Pauta());
+        voto.setVotacaoId(1L);
+        
+        when(votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(1L, 1L)).thenReturn(Optional.empty());
+        
+        UsuarioNaoEncontradoException exception = assertThrows(UsuarioNaoEncontradoException.class, () -> {
+            votacaoService.atualizarVoto(1L, 1L, false);
+        });
 
-    assertEquals("Usuário não encontrado", exception.getMessage());
-    verify(votacaoRepository, never()).save(any(Votacao.class));
+        assertEquals("Usuário não encontrado", exception.getMessage());
+        verify(votacaoRepository, never()).save(any(Votacao.class));
     }
 
     

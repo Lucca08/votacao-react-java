@@ -29,7 +29,7 @@ public class PautaController {
         this.usuarioService = usuarioService;
     }
 
-    @PostMapping
+    @PostMapping("/criar")
     public ResponseEntity<Pauta> criarPauta(@Valid @RequestBody PautaDTO pautaDTO, @RequestHeader("Usuario-CPF") String usuarioCPF) {
         Usuario usuario = usuarioService.buscarUsuarioPorCpf(usuarioCPF);
         
@@ -39,9 +39,9 @@ public class PautaController {
 
         UsuarioDTO usuarioDTO = mapToUsuarioDTO(usuario);
 
-        Pauta novaPauta = pautaService.criarPauta(pautaDTO, usuarioDTO);
+        Pauta pauta = pautaService.criarPauta(pautaDTO, usuarioDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(novaPauta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pauta);        
     }
 
     @DeleteMapping("/{id}")
