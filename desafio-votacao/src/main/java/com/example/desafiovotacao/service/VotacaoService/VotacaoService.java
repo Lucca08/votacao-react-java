@@ -22,12 +22,12 @@ public class VotacaoService {
     }
 
     @Transactional
-    public void votar(Long idPauta, Long usuarioId, boolean voto) {
-        Optional<Votacao> votacaoOptional = votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(idPauta, usuarioId);
+    public void votar(Long pautaId, Long usuarioId, boolean voto) {
+        Optional<Votacao> votacaoOptional = votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(pautaId, usuarioId);
         if (votacaoOptional.isPresent()) {
             throw new UsuarioJaVotouNaPautaException("Usuário já votou na pauta");
         }
-        Pauta pauta = new Pauta(idPauta, null, null); 
+        Pauta pauta = new Pauta(pautaId, null, null); 
         Votacao votacao = new Votacao();
         votacao.setVotacaoId(usuarioId);
         votacao.setPauta(pauta); 
@@ -37,8 +37,8 @@ public class VotacaoService {
 
 
     @Transactional
-    public int contarVotos(Long idPauta) {
-        List<Votacao> votos = votacaoRepository.findByPautaPautaId(idPauta);
+    public int contarVotos(Long pautaId) {
+        List<Votacao> votos = votacaoRepository.findByPautaPautaId(pautaId);
         int totalVotos = 0;
     for (Votacao voto : votos) {
         if (voto.isVoto()) {
@@ -51,8 +51,8 @@ public class VotacaoService {
     }
 
     @Transactional
-    public void atualizarVoto(Long idPauta, Long usuarioId, boolean novoVoto) {
-        Optional<Votacao> votacaoOptional = votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(idPauta, usuarioId);
+    public void atualizarVoto(Long pautaId, Long usuarioId, boolean novoVoto) {
+        Optional<Votacao> votacaoOptional = votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(pautaId, usuarioId);
         if (votacaoOptional.isPresent()) {
             Votacao votacao = votacaoOptional.get();
             votacao.setVoto(novoVoto);
@@ -63,8 +63,8 @@ public class VotacaoService {
     }
 
     @Transactional
-    public boolean usuarioPodeVotar(Long idPauta, Long usuarioId) {
-        Optional<Votacao> votacaoOptional = votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(idPauta, usuarioId);
+    public boolean usuarioPodeVotar(Long pautaId, Long usuarioId) {
+        Optional<Votacao> votacaoOptional = votacaoRepository.findByPautaPautaIdAndUsuarioUsuarioId(pautaId, usuarioId);
         return votacaoOptional.isEmpty(); 
     }
 }

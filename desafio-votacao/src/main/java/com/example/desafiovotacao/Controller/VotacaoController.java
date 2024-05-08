@@ -23,21 +23,21 @@ public class VotacaoController {
     }
 
     @PostMapping("/votar")
-    public ResponseEntity<Void> votar(@RequestParam Long idPauta, @RequestParam Long usuarioId, @Valid @RequestBody VotacaoDTO votacaoDTO) {
-        votacaoService.votar(idPauta, usuarioId, votacaoDTO.isVoto());
+    public ResponseEntity<Void> votar(@RequestParam Long  pautaId, @RequestParam Long usuarioId, @Valid @RequestBody VotacaoDTO votacaoDTO) {
+        votacaoService.votar(pautaId, usuarioId, votacaoDTO.isVoto());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     @GetMapping("/contarVotos")
-    public ResponseEntity<Integer> contarVotos(@RequestParam Long idPauta) {
-        int totalVotos = votacaoService.contarVotos(idPauta);
+    public ResponseEntity<Integer> contarVotos(@RequestParam Long pautaId) {
+        int totalVotos = votacaoService.contarVotos(pautaId);
         return ResponseEntity.ok(totalVotos);
     }
 
     @PutMapping("/atualizarVoto")
-    public ResponseEntity<Void> atualizarVoto(@RequestParam Long idPauta, @RequestParam Long usuarioId, @Valid @RequestBody VotacaoDTO votacaoDTO) {
-        votacaoService.atualizarVoto(idPauta, usuarioId, votacaoDTO.isVoto());
+    public ResponseEntity<Void> atualizarVoto(@RequestParam Long pautaId, @RequestParam Long usuarioId, @Valid @RequestBody VotacaoDTO votacaoDTO) {
+        votacaoService.atualizarVoto(pautaId, usuarioId, votacaoDTO.isVoto());
         return ResponseEntity.noContent().build();
     }
 

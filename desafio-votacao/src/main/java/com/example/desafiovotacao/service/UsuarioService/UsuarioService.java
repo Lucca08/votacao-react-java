@@ -91,24 +91,20 @@ public void deletarUsuario(Long id) {
     Usuario usuarioExistente = usuarioRepository.findById(id)
             .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com o ID: " + id));
     
-    // Verifica se há outro usuário com o mesmo CPF, excluindo o próprio usuário a ser atualizado
     if (usuarioRepository.existsByCpfAndUsuarioId(usuarioDTO.getCpf(), id)) {
         throw new UsuarioExistenteException("Já existe um usuário cadastrado com o CPF: " + usuarioDTO.getCpf());
     }
     
-    // Verifica se há outro usuário com o mesmo e-mail, excluindo o próprio usuário a ser atualizado
     if (usuarioRepository.existsByEmailAndUsuarioId(usuarioDTO.getEmail(), id)) {
         throw new UsuarioExistenteException("Já existe um usuário cadastrado com o e-mail: " + usuarioDTO.getEmail());
     }
 
-    // Atualiza os dados do usuário existente com os novos dados fornecidos
     usuarioExistente.setNome(usuarioDTO.getNome());
-    usuarioExistente.setCpf(usuarioDTO.getCpf());
     usuarioExistente.setEmail(usuarioDTO.getEmail());
+    usuarioExistente.setCpf(usuarioDTO.getCpf());
     usuarioExistente.setAdmin(usuarioDTO.isAdmin());
     
-    // Salva as alterações no banco de dados
     usuarioRepository.save(usuarioExistente);
-}
+    }
 
 }
