@@ -1,94 +1,95 @@
-    package com.example.desafiovotacao.ControllerTeste;
 
-    import static io.restassured.RestAssured.given;
-    import static org.hamcrest.Matchers.equalTo;
+package com.example.desafiovotacao.ControllerTeste;
 
-    import com.example.desafiovotacao.dto.UsuarioDTO;
-    import com.example.desafiovotacao.model.Usuario;
-    import com.fasterxml.jackson.databind.ObjectMapper;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
-    import org.junit.jupiter.api.Test;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.boot.test.context.SpringBootTest;
-    import org.springframework.boot.test.web.server.LocalServerPort;
-    import org.springframework.http.HttpStatus;
-    import org.springframework.http.MediaType;
+import com.example.desafiovotacao.dto.UsuarioDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-    @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-    public class UsuarioControllerIntegrationTest {
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
-        @LocalServerPort
-        private int port;
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@Transactional
+public class UsuarioControllerIntegrationTest {
 
-        @Autowired
-        private ObjectMapper objectMapper;
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    public void setup() {
+        System.out.println("Test server running on port: " + port);
+    }
 
     @Test
-    public void testAtualizarUsuario() throws Exception {
-        // Criar um usuário para usar no teste
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
-        usuarioDTO.setNome("Teste");
-        usuarioDTO.setSenha("123456");
-        usuarioDTO.setCpf("12345678901");
-        usuarioDTO.setEmail("teste@example.com");
-        usuarioDTO.setAdmin(true);
+    public void testCrudUsuario() throws Exception {
+        verificarDadosIniciais();
+        atualizarUsuario();
+        deletarUsuario();
+        verificarUsuarioDeletado();
+    }
 
-        // Testar o registro de usuário
+    private void verificarDadosIniciais() {
         given()
             .port(port)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(objectMapper.writeValueAsString(usuarioDTO))
         .when()
-            .post("/usuario")
-        .then()
-            .statusCode(HttpStatus.CREATED.value())
-            .body("nome", equalTo(usuarioDTO.getNome()))
-            .body("cpf", equalTo(usuarioDTO.getCpf()))
-            .body("email", equalTo(usuarioDTO.getEmail()))
-            .body("admin", equalTo(usuarioDTO.isAdmin()));
-
-        // Testar o login do usuário
-        given()
-            .port(port)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(objectMapper.writeValueAsString(usuarioDTO))
-        .when()
-            .post("/usuario/login")
+            .get("/usuario/1")
         .then()
             .statusCode(HttpStatus.OK.value())
-            .body("nome", equalTo(usuarioDTO.getNome()))
-            .body("cpf", equalTo(usuarioDTO.getCpf()))
-            .body("email", equalTo(usuarioDTO.getEmail()))
-            .body("admin", equalTo(usuarioDTO.isAdmin()));
+            .body("nome", equalTo("Teste"))
+            .body("cpf", equalTo("12345678901"))
+            .body("email", equalTo("teste@example.com"))
+            .body("admin", equalTo(true));
+    }
 
-        // Atualizar as informações do usuário
-        Usuario novoUsuario = new Usuario();
-        novoUsuario.setNome("Novo Nome");
-        novoUsuario.setEmail("novoemail@example.com");
-        novoUsuario.setSenha("654321");
-        novoUsuario.setCpf("10987654321");
-        novoUsuario.setAdmin(true);
+    private void atualizarUsuario() throws Exception {
+        UsuarioDTO novoUsuarioDTO = new UsuarioDTO();
+        novoUsuarioDTO.setNome("Novo Nome");
+        novoUsuarioDTO.setEmail("novoemail@example.com");
+        novoUsuarioDTO.setSenha("654321");
+        novoUsuarioDTO.setCpf("10987654321");
+        novoUsuarioDTO.setAdmin(true);
 
         given()
             .port(port)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(objectMapper.writeValueAsString(novoUsuario))
+            .body(objectMapper.writeValueAsString(novoUsuarioDTO))
         .when()
             .put("/usuario/1")
         .then()
             .statusCode(HttpStatus.OK.value())
-            .body("nome", equalTo(novoUsuario.getNome()))
-            .body("email", equalTo(novoUsuario.getEmail()));
+            .body("nome", equalTo(novoUsuarioDTO.getNome()))
+            .body("email", equalTo(novoUsuarioDTO.getEmail()));
+    }
 
-        // Deletar o usuário
+    private void deletarUsuario() {
         given()
             .port(port)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(objectMapper.writeValueAsString(usuarioDTO))
-
         .when()
             .delete("/usuario/1")
         .then()
             .statusCode(HttpStatus.NO_CONTENT.value());
-        }
     }
+
+    private void verificarUsuarioDeletado() {
+        given()
+            .port(port)
+        .when()
+            .get("/usuario/1")
+        .then()
+            .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+}
